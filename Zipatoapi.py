@@ -1,7 +1,9 @@
 # Author: Gregor Gruener
-# Version: 0.1
+# Version: 0.2
 
 # Changelog:
+# 0.2
+# - Added "get_virtual_endpoints_config" method
 # 0.1
 # - initial version
 
@@ -91,7 +93,7 @@ class Zipatoapi:
 
 		return hash_token.hexdigest()
 
-	def get_virtual_endpoints(self):
+	def get_all_virtual_endpoints(self):
 		'''
 		Description:
 		 get all virtual endpoints
@@ -134,6 +136,27 @@ class Zipatoapi:
 		c.setopt(pycurl.POSTFIELDS, self.data)
 		c.setopt(pycurl.VERBOSE, 1)
 		c.perform()
+
+	def get_virtual_endpoints_config(self, uuid):
+		'''
+		Description:
+		 get virtual endpoints config
+		'''
+
+		self.uuid = uuid
+
+		uri = "virtualEndpoints/"+self.uuid+"/config"
+		api_url = self.url + uri
+		c = pycurl.Curl()
+		output_init = BytesIO()
+
+		c.setopt(c.URL, api_url)
+		### Create the cookie File
+		c.setopt(pycurl.COOKIEFILE, 'cookie.txt')
+		c.setopt(c.WRITEFUNCTION, output_init.write)
+		c.perform()
+
+		return json.loads(output_init.getvalue())
 
 	def create_rooms(self, data):
 		'''
