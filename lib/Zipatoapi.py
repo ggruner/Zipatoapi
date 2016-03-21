@@ -1,7 +1,10 @@
 # Author: Gregor Gruener
-# Version: 0.3
+# Version: 0.4
 
 # Changelog:
+# 0.4
+# - Added "set_value_virtual_endpoint" method
+# - Added "save_and_synchronize" method
 # 0.3
 # - Added "get_virtual_endpoint" method
 # 0.2
@@ -149,6 +152,7 @@ class Zipatoapi:
 
 		uri = "virtualEndpoints/"+self.uuid+"/config"
 		api_url = self.url + uri
+		
 		c = pycurl.Curl()
 		output_init = BytesIO()
 
@@ -181,17 +185,17 @@ class Zipatoapi:
 
 		return json.loads(output_init.getvalue())
 
-	def set_value_virtual_endpoint(self, url, value):
+	def set_value_virtual_endpoint(self, http):
 		'''
 		Description:
+		 This is just a simple Method to set a value on a virtual Endpoint URL
 		'''
-		self.value = value
-		self.http = url + self.value
-
+		self.http = http
+		
 		c = pycurl.Curl()
 		c.setopt(pycurl.URL, self.http)
-		c.setopt(c.WRITEFUNCTION, output_init.write)
 		c.perform()
+		c.close()
 
 	def create_rooms(self, data):
 		'''
@@ -211,3 +215,27 @@ class Zipatoapi:
 		c.setopt(pycurl.POSTFIELDS, self.data)
 		c.setopt(pycurl.VERBOSE, 1)
 		c.perform()
+
+	def save_and_synchronize(self, wait="false", timeout=30):
+		'''
+		Description:
+		 synchronize Zipato with the Server
+		'''
+		self.wait = wait
+		self.timeout = timeout
+
+		uri = "box/saveAndSynchronize?wait=" + self.wait + "&timeout=" + str(self.timeout)
+
+		api_url = self.url + uri
+		
+		c = pycurl.Curl()
+		output_init = BytesIO()
+
+		c.setopt(c.URL, api_url)
+		### Create the cookie File
+		c.setopt(pycurl.COOKIEFILE, 'cookie.txt')
+		c.setopt(c.WRITEFUNCTION, output_init.write)
+		c.perform()
+		c.close()
+
+		return json.loads(output_init.getvalue())
