@@ -1,7 +1,9 @@
 # Author: Gregor Gruener
-# Version: 0.4
+# Version: 0.5
 
 # Changelog:
+# 0.5
+# - Added "synchronize" method
 # 0.4
 # - Added "set_value_virtual_endpoint" method
 # - Added "save_and_synchronize" method
@@ -147,7 +149,6 @@ class Zipatoapi:
 		Description:
 		 get virtual endpoints config
 		'''
-
 		self.uuid = uuid
 
 		uri = "virtualEndpoints/"+self.uuid+"/config"
@@ -169,7 +170,6 @@ class Zipatoapi:
 		Description:
 		 get virtual endpoint
 		'''
-
 		self.uuid = uuid
 
 		uri = "virtualEndpoints/"+self.uuid+"?network=false&device=false&clusterEndpoints=false&config=false&icons=true&type=false&bindings=false&descriptor=false&room=false&info=false&full=false&attributes=false"
@@ -225,6 +225,31 @@ class Zipatoapi:
 		self.timeout = timeout
 
 		uri = "box/saveAndSynchronize?wait=" + self.wait + "&timeout=" + str(self.timeout)
+
+		api_url = self.url + uri
+		
+		c = pycurl.Curl()
+		output_init = BytesIO()
+
+		c.setopt(c.URL, api_url)
+		### Create the cookie File
+		c.setopt(pycurl.COOKIEFILE, 'cookie.txt')
+		c.setopt(c.WRITEFUNCTION, output_init.write)
+		c.perform()
+		c.close()
+
+		return json.loads(output_init.getvalue())
+
+	def synchronize(self, ifneeded="false", wait="false", timeout=30):
+		'''
+		Description:
+		 synchronize Zipato with the Server
+		'''
+		self.ifneeded = ifneeded
+		self.wait = wait
+		self.timeout = timeout
+
+		uri = "box/synchronize?ifNeeded=" + self.ifneeded + "wait=" + self.wait + "&timeout=" + str(self.timeout)
 
 		api_url = self.url + uri
 		
