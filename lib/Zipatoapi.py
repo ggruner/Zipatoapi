@@ -1,7 +1,10 @@
 # Author: Gregor Gruener
-# Version: 0.5
+# Version: 0.6
 
 # Changelog:
+# 0.6
+# - Adjusted the get_virtual_endpoint method
+# - Added "put_attributes_config" method
 # 0.5
 # - Added "synchronize" method
 # 0.4
@@ -165,14 +168,16 @@ class Zipatoapi:
 
 		return json.loads(output_init.getvalue())
 
-	def get_virtual_endpoint(self, uuid):
+	def get_virtual_endpoint(self, uuid, network="false", device="false", clusterEndpoints="false", config="false", icons="true",
+		                     bindings="false", descriptor="false", room="false", info="false", full="false", attributes="false"):
 		'''
 		Description:
 		 get virtual endpoint
 		'''
 		self.uuid = uuid
 
-		uri = "virtualEndpoints/"+self.uuid+"?network=false&device=false&clusterEndpoints=false&config=false&icons=true&type=false&bindings=false&descriptor=false&room=false&info=false&full=false&attributes=false"
+		uri = ("virtualEndpoints/"+self.uuid+"?network="+ network +"&device=" + device + "&clusterEndpoints=" + clusterEndpoints + "&config=" + config + "&icons=" + icons + 
+		      "&type=false&bindings=" + bindings + "&descriptor=" + descriptor + "&room=" + room + "&info=" + info + "&full=" + full + "&attributes=" + attributes)
 		api_url = self.url + uri
 		c = pycurl.Curl()
 		output_init = BytesIO()
@@ -205,6 +210,26 @@ class Zipatoapi:
 		self.data = data
 		
 		uri = "rooms/"
+		api_url = self.url + uri
+
+		c = pycurl.Curl()
+		c.setopt(pycurl.URL, api_url)
+		c.setopt(pycurl.HTTPHEADER, ['Accept: application/json','Content-Type: application/json','charset=UTF-8'])
+		c.setopt(pycurl.COOKIEFILE, 'cookie.txt')
+		c.setopt(pycurl.POST, 1)
+		c.setopt(pycurl.POSTFIELDS, self.data)
+		c.setopt(pycurl.VERBOSE, 1)
+		c.perform()
+
+	def put_attributes_config(self, data, uuid):
+		'''
+		Description:
+		 modify an attribute
+		'''
+		self.data = data
+		self.uuid = uuid
+
+		uri = "attributes/" + self.uuid + "/config"
 		api_url = self.url + uri
 
 		c = pycurl.Curl()
