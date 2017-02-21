@@ -1,7 +1,9 @@
 # Author: Gregor Gruener
-# Version: 0.7
+# Version: 0.7.1
 
 # Changelog:
+# 0.7.1
+# Fixed an issue in "put_attributes" method - Changed from POST to PUT
 # 0.7
 # - Added "put_attributes" method
 # 0.6
@@ -307,7 +309,7 @@ class Zipatoapi:
 		c.setopt(pycurl.URL, api_url)
 		c.setopt(pycurl.HTTPHEADER, ['Accept: application/json','Content-Type: application/json','charset=UTF-8'])
 		c.setopt(pycurl.COOKIEFILE, 'cookie.txt')
-		c.setopt(pycurl.POST, 1)
+		c.setopt(pycurl.CUSTOMREQUEST, "PUT")
 		c.setopt(pycurl.POSTFIELDS, self.data)
 		c.setopt(pycurl.VERBOSE, 1)
 		c.perform()
