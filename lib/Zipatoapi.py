@@ -1,7 +1,9 @@
 # Author: Gregor Gruener
-# Version: 0.6
+# Version: 0.7
 
 # Changelog:
+# 0.7
+# - Added "put_attributes" method
 # 0.6
 # - Adjusted the get_virtual_endpoint method
 # - Added "put_attributes_config" method
@@ -289,3 +291,23 @@ class Zipatoapi:
 		c.close()
 
 		return json.loads(output_init.getvalue())
+	
+	def put_attributes(self, data, uuid):
+		'''
+		Description:
+		 set attribute value with application/json content
+		'''
+		self.data = data
+		self.uuid = uuid
+
+		uri = "attributes/" + self.uuid + "/value"
+		api_url = self.url + uri
+
+		c = pycurl.Curl()
+		c.setopt(pycurl.URL, api_url)
+		c.setopt(pycurl.HTTPHEADER, ['Accept: application/json','Content-Type: application/json','charset=UTF-8'])
+		c.setopt(pycurl.COOKIEFILE, 'cookie.txt')
+		c.setopt(pycurl.POST, 1)
+		c.setopt(pycurl.POSTFIELDS, self.data)
+		c.setopt(pycurl.VERBOSE, 1)
+		c.perform()
