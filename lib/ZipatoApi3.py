@@ -1,7 +1,7 @@
 # Author: Gregor Gruener
-# Version: 0.1
+# Version: 0.2
 # Rewritten in Python3
-# Tested against Python3.5.3
+# Tested against Python3.5.3, 3.7.3
 
 import requests
 import json
@@ -23,8 +23,8 @@ class ZipatoApi3:
         Return:
         {
          "success": true,
-         "jsessionid": "XXXXXXXX1234XXXXXXX-n1.frontend3",
-         "nonce": "Hsnash2312ssa"
+         "jsessionid": "3185591CD191F18D1551440AE1BEF86A-n1.frontend3",
+         "nonce": "GTPSLZUcDyjEBqeL"
         }
         """
         uri = "user/init"
@@ -37,10 +37,10 @@ class ZipatoApi3:
         return d['nonce'], c
 
     def get_user_login(self, token, cookie):
-        '''
+        """
         Description:
          login
-        '''
+        """
         self.token = token
         self.cookie = cookie
 
@@ -50,11 +50,11 @@ class ZipatoApi3:
         r = requests.get(api_url, cookies=self.cookie)
 
     def get_token(self, n):
-        '''
+        """
          Description:
           https://my.zipato.com/zipato-web/api/#!/user/login
           The whole process to get a valid token and to authenticate on zipato
-        '''
+        """
         self.n = n
         hash_password = hashlib.sha1(self.password.encode('utf-8'))
         hex_password = hash_password.hexdigest()
@@ -64,4 +64,18 @@ class ZipatoApi3:
         hash_token = hashlib.sha1(combined.encode('utf-8'))
 
         return hash_token.hexdigest()
-        
+
+    def get_virtual_endpoints(self, cookie):
+        """
+        Description:
+         Get all virtual endpoints
+        """
+        self.cookie = cookie
+
+        uri = "virtualEndpoints"
+
+        api_url = self.url + uri
+        r = requests.get(api_url, cookies=self.cookie)
+        d = json.loads(r.text)
+
+        return d
