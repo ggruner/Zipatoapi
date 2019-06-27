@@ -1,5 +1,5 @@
 # Author: Gregor Gruener
-# Version: 0.2
+# Version: 0.3
 # Rewritten in Python3
 # Tested against Python3.5.3, 3.7.3
 
@@ -70,6 +70,7 @@ class ZipatoApi3:
         Description:
          Get all virtual endpoints
         """
+
         self.cookie = cookie
 
         uri = "virtualEndpoints"
@@ -79,3 +80,39 @@ class ZipatoApi3:
         d = json.loads(r.text)
 
         return d
+
+    def get_virtual_endpoints_uuid(self, cookie, uuid):
+        """
+        Description:
+         Get a virtual Endpoint
+        """
+
+        self.cookie = cookie
+        self.uuid = uuid
+
+        uri = "virtualEndpoints/" + uuid
+
+        api_url = self.url + uri
+        r = requests.get(api_url, cookies=self.cookie)
+        d = json.loads(r.text)
+
+        return d
+
+    def post_virtual_endpoints(self, cookie, category, name):
+        """
+        Description:
+         Create a virtual endpoint
+         Category: GAUGE, SENSOR, METER, ONOFF, LEVEL_CONTROL
+        """
+
+        self.cookie = cookie
+        self.category = category
+        self.name = name
+
+        uri = "virtualEndpoints" + "?category=" + self.category
+
+        api_url = self.url + uri
+        r = requests.post(api_url, cookies=self.cookie, json={"name": self.name})
+
+        return r
+    
