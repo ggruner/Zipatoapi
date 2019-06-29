@@ -115,4 +115,34 @@ class ZipatoApi3:
         r = requests.post(api_url, cookies=self.cookie, json={"name": self.name})
 
         return r
+
+    def get_user_logout(self, cookie):
+        """
+        Description:
+         Log the current user out
+        """
+
+        self.cookie = cookie
+
+        uri = "user/logout"
+
+        api_url = self.url + uri
+        r = requests.get(api_url, cookies=self.cookie)
+
+        return r
+
+    def get_save_and_synchronize(self, cookie):
+        """
+        Description:
+         Synchronize Zipato with the Server
+        """
+
+        self.cookie = cookie
+
+        uri = "box/saveAndSynchronize"
+
+        api_url = self.url + uri
+        r = requests.get(api_url, cookies=self.cookie)
+
+        return r
     
